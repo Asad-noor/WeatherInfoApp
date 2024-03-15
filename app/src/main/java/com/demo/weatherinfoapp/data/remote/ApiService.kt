@@ -1,5 +1,6 @@
 package com.demo.weatherinfoapp.data.remote
 
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -9,5 +10,5 @@ interface ApiService {
     suspend fun getWeatherData(
         @Query("latitude") lat: Double,
         @Query("longitude") long: Double
-    ): WeatherDto
+    ): Response<WeatherDto>
 }
