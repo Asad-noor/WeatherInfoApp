@@ -1,9 +1,17 @@
 package com.demo.weatherinfoapp.ui
 
 import android.Manifest
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -11,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.weatherinfoapp.databinding.ActivityMainBinding
 import com.demo.weatherinfoapp.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -42,11 +51,11 @@ class MainActivity : AppCompatActivity() {
             //Log.d("tttt", "res >${it.data?.currentWeatherData?.windSpeed}")
             when (it) {
                 is Resource.Loading -> {
-                    Log.d("tttt", "loading..")
+                    binding.clProgressBar.visibility = View.VISIBLE
                 }
 
                 is Resource.Success -> {
-                    Log.d("tttt", "res >${it.data?.currentWeatherData?.windSpeed}")
+                    binding.clProgressBar.visibility = View.GONE
                     it.data?.let {
                         it.currentWeatherData?.let {
                             val formattedTime = it.time.format(
@@ -70,9 +79,48 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 is Resource.Error -> {
+                    binding.clProgressBar.visibility = View.GONE
                     Log.d("tttt", "error response >${it.errorMessage}")
                 }
+
+                else -> {
+                    binding.clProgressBar.visibility = View.GONE
+                }
             }
+        }
+
+        binding.inputCityWeather.setOnEditorActionListener { view, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val location = (view as EditText).text.toString()
+                if (location.isEmpty()) {
+
+                } else {
+                    getLocationFromAddress(location, this@MainActivity)
+                }
+            }
+            false
+        }
+    }
+
+    private fun getLocationFromAddress(location: String, context: Context) {
+        val geocoder = Geocoder(context)
+        try {
+            val addressList: List<Address>? = geocoder.getFromLocationName(location, 1)
+            if (!addressList.isNullOrEmpty()) {
+                val address = addressList[0]
+                val latitude = address.latitude
+                val longitude = address.longitude
+
+                val loc = Location("")
+                loc.latitude = latitude
+                loc.longitude = longitude
+                viewModel.getWeatherByLocation(loc)
+            } else {
+                Toast.makeText(context, "Location not found", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(context, "Error retrieving location", Toast.LENGTH_SHORT).show()
         }
     }
 }

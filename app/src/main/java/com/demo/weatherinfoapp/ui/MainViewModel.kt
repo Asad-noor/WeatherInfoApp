@@ -1,5 +1,6 @@
 package com.demo.weatherinfoapp.ui
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -51,6 +52,29 @@ class MainViewModel @Inject constructor(
 
             } ?: kotlin.run {
                 _weatherResponse.value = Resource.Error("Couldn't retrieve location. Make sure to grant permission and enable GPS.")
+            }
+        }
+    }
+
+    fun getWeatherByLocation(location: Location) {
+        viewModelScope.launch {
+            _weatherResponse.value = Resource.Loading()
+
+            try {
+                val result = repository.getWeatherData(location.latitude, location.longitude)
+                if (result.body() != null) {
+                    _weatherResponse.postValue(Resource.Success(result.body()?.toWeatherInfo()))
+                } else {
+                    if (result.errorBody() != null) {
+                        Log.d("tttt", "error code " + result.code())
+                        _weatherResponse.postValue(Resource.Error("Error"))
+                    } else {
+                        _weatherResponse.postValue(Resource.Error("Api Error"))
+                    }
+                }
+            } catch (e: Exception) {
+                val error = handleHttpException(e)
+                _weatherResponse.postValue(Resource.Error(error))
             }
         }
     }
