@@ -80,32 +80,41 @@ class MainViewModel @Inject constructor(
     }
 
     private fun handleHttpException(exception: Exception): String {
+        var errorStr = ""
         when (exception) {
             is ConnectException -> {
                 // Handle connection-related exception
-                Log.e("tttt", "Connection error: ${exception.message}")
+                errorStr = "Internet connection error"
+                Log.e("tttt", "Internet connection error: ${exception.message}")
             }
 
             is SocketTimeoutException -> {
                 // Handle socket timeout exception
+                errorStr = "Socket timeout error"
                 Log.e("tttt", "Socket timeout: ${exception.message}")
             }
 
             is UnknownHostException -> {
                 // Handle unknown host exception (no internet)
+                errorStr = "No internet!"
                 Log.e("tttt", "No internet connection: ${exception.message}")
             }
 
             is RuntimeException -> {
                 // Handle other runtime exceptions
+                errorStr = "Runtime exception occurred"
                 Log.e("tttt", "Runtime exception occurred: ${exception.message}")
             }
 
             else -> {
                 // Handle other types of exceptions
+                errorStr = "An unexpected exception occurred"
                 Log.e("tttt", "An unexpected exception occurred: ${exception.message}")
             }
         }
-        return exception.message.toString()
+        if (errorStr.isEmpty()) {
+            errorStr = exception.message.toString()
+        }
+        return errorStr
     }
 }

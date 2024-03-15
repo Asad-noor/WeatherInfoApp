@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.clProgressBar.visibility = View.GONE
                     Log.d("tttt", "error response >${it.errorMessage}")
+                    binding.tvTemperature.text = it.errorMessage
                 }
 
                 else -> {
@@ -93,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val location = (view as EditText).text.toString()
                 if (location.isEmpty()) {
-
+                    Toast.makeText(this@MainActivity, "Please enter a location", Toast.LENGTH_SHORT).show()
                 } else {
                     getLocationFromAddress(location, this@MainActivity)
                 }
