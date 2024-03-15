@@ -7,11 +7,14 @@ import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import com.demo.weatherinfoapp.R
 import com.demo.weatherinfoapp.databinding.ActivityMainBinding
 import com.demo.weatherinfoapp.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -46,6 +49,19 @@ class MainActivity : AppCompatActivity() {
 
                 is Resource.Success -> {
                     Log.d("tttt", "res >${it.data?.currentWeatherData?.windSpeed}")
+                    it.data?.let {
+                        it.currentWeatherData?.let {
+                            val formattedTime = it.time.format(
+                                DateTimeFormatter.ofPattern("HH:mm")
+                            )
+                            binding.tvCurrentTime.text = "Today at $formattedTime"
+                            binding.ivWeatherIcon.setImageResource(it.weatherType.iconRes)
+                            binding.tvTemperature.text = "${it.temperatureCelsius}°C"
+                            binding.tvStatus.text = it.weatherType.weatherDesc
+
+                            binding.tvHumidityAndWs.text= "Humidity: ${it.humidity.roundToInt()}% | Wind Speed: ${it.windSpeed.roundToInt()}km/h"
+                        }
+                    }
                 }
 
                 is Resource.Error -> {
