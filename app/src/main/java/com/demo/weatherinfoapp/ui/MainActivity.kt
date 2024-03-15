@@ -7,9 +7,7 @@ import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.Observer
-import com.demo.weatherinfoapp.R
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.weatherinfoapp.databinding.ActivityMainBinding
 import com.demo.weatherinfoapp.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,6 +59,13 @@ class MainActivity : AppCompatActivity() {
 
                             binding.tvHumidityAndWs.text= "Humidity: ${it.humidity.roundToInt()}% | Wind Speed: ${it.windSpeed.roundToInt()}km/h"
                         }
+                        val adapter = PerDayWeatherAdapter(
+                            itemList = it.weatherDataPerDay.get(0),
+                            onClickItem = {
+
+                            })
+                        binding.rvPerDayWeather.layoutManager = LinearLayoutManager(this@MainActivity)
+                        binding.rvPerDayWeather.adapter = adapter
                     }
                 }
 
@@ -69,6 +74,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        //viewModel.loadWeatherInfo()
     }
 }

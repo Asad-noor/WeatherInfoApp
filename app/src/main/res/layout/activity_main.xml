@@ -8,12 +8,13 @@
     tools:context=".ui.MainActivity">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvWeather"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:cardElevation="3dp"
         app:cardCornerRadius="8dp"
         app:cardBackgroundColor="@color/color_blue"
-        android:layout_margin="10dp"
+        android:layout_margin="16dp"
         app:layout_constraintDimensionRatio="2:1"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -83,5 +84,27 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tvTodayLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Today"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:includeFontPadding="false"
+        android:layout_margin="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cvWeather"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPerDayWeather"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        tools:listitem="@layout/item_day_weather"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvTodayLabel"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
